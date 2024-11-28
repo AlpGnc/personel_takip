@@ -56,4 +56,3 @@ python manage.py runserver
 Tarayıcıda http://127.0.0.1:8000/ adresine giderek uygulamayı kullanabilirsiniz.
 --------------------------------------------------------------------------------------------------------------------
 
-A
