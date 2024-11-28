@@ -2,19 +2,19 @@
 
 from pathlib import Path
 
-# Base Directory
+# Temel Dizini (Base Directory)
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Secret Key
+# Gizli Anahtar (Secret Key)
 SECRET_KEY = 'django-insecure-your-secret-key'
 
-# Debug
+# Debug (Hata Ayıklama) Durumu
 DEBUG = True
 
-# Allowed Hosts
+# İzin Verilen Hostlar
 ALLOWED_HOSTS = []
 
-# Installed Apps
+# Yüklü Uygulamalar (Installed Apps)
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -26,10 +26,9 @@ INSTALLED_APPS = [
     'kullanici',
     'saat',
     'izin',  # İzin uygulaması
-    
 ]
 
-# Middleware
+# Middleware (Ara Katmanlar)
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -40,10 +39,10 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# Root URL Configuration
+# Ana URL Yapılandırması (Root URL Configuration)
 ROOT_URLCONF = 'personel_takip.urls'
 
-# Templates
+# Şablonlar (Templates)
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -60,25 +59,25 @@ TEMPLATES = [
     },
 ]
 
-# WSGI Application
+# WSGI Uygulaması
 WSGI_APPLICATION = 'personel_takip.wsgi.application'
 
-# ASGI Application
+# ASGI Uygulaması
 ASGI_APPLICATION = 'personel_takip.asgi.application'
 
-# Database
+# Veritabanı (Database)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'personel_takip',  # Replace with your DB name
-        'USER': 'postgres',        # Replace with your PostgreSQL username
-        'PASSWORD': '123',         # Replace with your PostgreSQL password
+        'NAME': 'personel_takip',  # Veritabanı adını buraya girin
+        'USER': 'postgres',        # PostgreSQL kullanıcı adınızı buraya girin
+        'PASSWORD': '123',         # PostgreSQL şifrenizi buraya girin
         'HOST': 'localhost',
         'PORT': '5432',
     }
 }
 
-# Password Validators
+# Şifre Doğrulayıcıları (Password Validators)
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -94,24 +93,24 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Localization
+# Yerelleştirme (Localization)
 LANGUAGE_CODE = 'tr'
 TIME_ZONE = 'Europe/Istanbul'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-# Static Files
+# Statik Dosyalar (Static Files)
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
-# Default Primary Key Field Type
+# Varsayılan Birincil Anahtar Alanı Türü
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Custom User Model
+# Özel Kullanıcı Modeli (Custom User Model)
 AUTH_USER_MODEL = 'kullanici.Kullanici'
 
-# Login Redirects
+# Giriş Yönlendirmeleri
 LOGIN_REDIRECT_URL = 'saat:redirect_user'  # Namespace kullanarak yönlendirme
 LOGOUT_REDIRECT_URL = 'homepage'  # Anasayfaya yönlendirme
 
@@ -129,15 +128,15 @@ CELERY_RESULT_SERIALIZER = 'json'
 # Django Channels Ayarları
 ASGI_APPLICATION = 'personel_takip.asgi.application'
 
-# Email Ayarları (Bildirimler için)
+# E-posta Ayarları (Bildirimler için)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'  # Örneğin Gmail SMTP
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'your_email@example.com'  # Replace with your email
-EMAIL_HOST_PASSWORD = 'your_email_password'  # Replace with your email password
+EMAIL_HOST_USER = 'your_email@example.com'  # E-posta adresinizi buraya girin
+EMAIL_HOST_PASSWORD = 'your_email_password'  # E-posta şifrenizi buraya girin
 
-# Admin Emails
+# Admin E-posta Adresleri
 ADMINS = [
     ('Admin Name', 'admin@example.com'),
 ]
