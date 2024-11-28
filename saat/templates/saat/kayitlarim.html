@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Giriş/Çıkış Kayıtlarım</title>
+</head>
+<body>
+    <h1>Giriş/Çıkış Kayıtlarım</h1>
+    <table border="1">
+        <tr>
+            <th>Giriş Saati</th>
+            <th>Çıkış Saati</th>
+        </tr>
+        {% for kayit in kayitlar %}
+        <tr>
+            <td>{{ kayit.giris_saati }}</td>
+            <td>{{ kayit.cikis_saati|default:"Henüz çıkış yapılmadı" }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>İzin Taleplerini Onayla</title>
+</head>
+<body>
+    <h1>İzin Taleplerini Onayla</h1>
+    
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    
+    <ul>
+        {% for izin in izinler %}
+        <li>
+            {{ izin.personel.username }}: {{ izin.baslangic_tarihi }} - {{ izin.bitis_tarihi }}
+            <form method="post" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" name="onayla" value="{{ izin.id }}">Onayla</button>
+                <button type="submit" name="reddet" value="{{ izin.id }}">Reddet</button>
+            </form>
+        </li>
+        {% empty %}
+            <li>Onay bekleyen izin talebi bulunmamaktadır.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

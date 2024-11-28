@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personel Paneli</title>
+    <style>
+      body {
+        font-family: 'Arial', sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f8f9fa;
+      }
+
+      header {
+        background-color: #343a40;
+        color: white;
+        padding: 20px;
+        text-align: center;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        margin: 0;
+      }
+
+      .container {
+        width: 80%;
+        margin: 20px auto;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+      }
+
+      h2 {
+        font-size: 1.8rem;
+        margin-top: 0;
+        color: #343a40;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+      }
+
+      table, th, td {
+        border: 1px solid #dee2e6;
+      }
+
+      th {
+        background-color: #007bff;
+        color: white;
+        text-align: center;
+        padding: 12px;
+      }
+
+      td {
+        text-align: center;
+        padding: 10px;
+        vertical-align: middle;
+      }
+
+      tr:nth-child(even) {
+        background-color: #f2f2f2;
+      }
+
+      .form-container {
+        margin-top: 20px;
+      }
+
+      .form-container button {
+        padding: 10px 20px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      .form-container button:hover {
+        background-color: #218838;
+      }
+
+      .actions {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+      }
+
+      .actions a {
+        text-decoration: none;
+        padding: 12px 20px;
+        background-color: #007bff;
+        color: white;
+        border-radius: 4px;
+      }
+
+      .actions a:hover {
+        background-color: #0056b3;
+      }
+
+      .alert {
+        background-color: #f8d7da;
+        padding: 15px;
+        border-radius: 4px;
+        color: #721c24;
+        margin-bottom: 20px;
+      }
+
+      .success {
+        background-color: #d4edda;
+        color: #155724;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .container {
+          width: 95%;
+        }
+        table, th, td {
+          font-size: 14px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Personel Paneli</h1>
+    </header>
+
+    <div class="container">
+      <!-- Mesajlar -->
+      {% if messages %}
+      <div class="alert {% if message.tags == 'success' %}success{% else %}error{% endif %}">
+        <ul>
+          {% for message in messages %}
+          <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+      <!-- Giriş/Çıkış Kayıtları -->
+      <section>
+        <h2>Giriş/Çıkış Kayıtlarım</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Giriş Saati</th>
+              <th>Çıkış Saati</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for kayit in giris_cikis_kayitlari %}
+            <tr>
+              <td>{{ kayit.giris_saati }}</td>
+              <td>{{ kayit.cikis_saati|default:"Henüz çıkış yapılmadı" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="2">Henüz giriş/çıkış kaydı bulunmamaktadır.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Giriş Kaydı Ekle -->
+      <section>
+        <h2>Giriş Kaydı Ekle</h2>
+        {% if giris_izin_var %}
+        <form method="post" class="form-container">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit" name="giris_kaydi_ekle">Giriş Kaydı Ekle</button>
+        </form>
+        {% else %}
+        <p style="color: red">
+          Yeni giriş kaydı eklemeden önce çıkış kaydı eklemelisiniz.
+        </p>
+        {% endif %}
+      </section>
+
+      <!-- Çıkış Kaydı Ekle -->
+      <section>
+        <h2>Çıkış Kaydı Ekle</h2>
+        {% if not giris_izin_var %}
+        <form method="post" class="form-container">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit" name="cikis_kaydi_ekle">Çıkış Kaydı Ekle</button>
+        </form>
+        {% else %}
+        <p style="color: red">Çıkış kaydı eklemek için önce giriş kaydı yapmalısınız.</p>
+        {% endif %}
+      </section>
+
+      <!-- Yeni İzin Talebi -->
+      <section>
+        <h2>Yeni İzin Talebi</h2>
+        <form method="post" class="form-container">
+          {% csrf_token %}
+          <div>
+            <label for="baslangic_tarihi">Başlangıç Tarihi:</label>
+            <input
+              type="date"
+              id="baslangic_tarihi"
+              name="baslangic_tarihi"
+              required
+            />
+          </div>
+          <div>
+            <label for="bitis_tarihi">Bitiş Tarihi:</label>
+            <input type="date" id="bitis_tarihi" name="bitis_tarihi" required />
+          </div>
+          <button type="submit" name="izin_talep_form">Talep Gönder</button>
+        </form>
+      </section>
+
+      <!-- İzin Taleplerim -->
+      <section>
+        <h2>İzin Taleplerim</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Başlangıç Tarihi</th>
+              <th>Bitiş Tarihi</th>
+              <th>Durum</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for izin in izin_talepleri %}
+            <tr>
+              <td>{{ izin.baslangic_tarihi }}</td>
+              <td>{{ izin.bitis_tarihi }}</td>
+              <td>{{ izin.onay_durumu }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="3">Henüz izin talebi bulunmamaktadır.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </section>
+
+      <div class="actions">
+        <a href="{% url 'homepage' %}">Ana Sayfaya Dön</a>
+      </div>
+    </div>
+  </body>
+</html>

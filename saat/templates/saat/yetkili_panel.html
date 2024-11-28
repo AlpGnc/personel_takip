@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yetkili Paneli</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+
+        header {
+            background-color: #343a40;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+        }
+
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin-top: 0;
+            color: #343a40;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #dee2e6;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            padding: 12px;
+        }
+
+        td {
+            text-align: center;
+            padding: 10px;
+            vertical-align: middle;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .form-container {
+            margin-top: 20px;
+        }
+
+        .form-container button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .form-container button:hover {
+            background-color: #218838;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .actions a {
+            text-decoration: none;
+            padding: 12px 20px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 4px;
+        }
+
+        .actions a:hover {
+            background-color: #0056b3;
+        }
+
+        .alert {
+            background-color: #f8d7da;
+            padding: 15px;
+            border-radius: 4px;
+            color: #721c24;
+            margin-bottom: 20px;
+        }
+
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+            }
+            table, th, td {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Yetkili Paneli</h1>
+    </header>
+
+    <div class="container">
+        <!-- Mesajlar -->
+        {% if messages %}
+        <div class="alert {% if message.tags == 'success' %}success{% else %}error{% endif %}">
+            <ul>
+                {% for message in messages %}
+                <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <!-- Personel Giriş/Çıkış Kayıtları -->
+        <section>
+            <h2>Personel Giriş/Çıkış Kayıtları</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Personel</th>
+                        <th>Giriş Saati</th>
+                        <th>Çıkış Saati</th>
+                        <th>Geç Kalma Süresi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for kayit in giris_cikis_kayitlari %}
+                    <tr>
+                        <td>{{ kayit.personel.username }}</td>
+                        <td>{{ kayit.giris_saati }}</td>
+                        <td>{{ kayit.cikis_saati|default:"Henüz çıkış yapılmadı" }}</td>
+                        <td>
+                            {% if kayit.lateness %}
+                                {{ kayit.lateness }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4">Henüz giriş/çıkış kaydı bulunmamaktadır.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+        <form method="post" class="form-container">
+            {% csrf_token %}
+            <button type="submit" name="temizle_giris_cikis">Giriş/Çıkış Kayıtlarını Temizle</button>
+        </form>
+
+        <!-- Bekleyen İzin Talepleri -->
+        <section>
+            <h2>Bekleyen İzin Talepleri</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Personel</th>
+                        <th>Başlangıç Tarihi</th>
+                        <th>Bitiş Tarihi</th>
+                        <th>Durum</th>
+                        <th>İşlem</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for izin in izin_talepleri %}
+                    <tr>
+                        <td>{{ izin.personel.username }}</td>
+                        <td>{{ izin.baslangic_tarihi }}</td>
+                        <td>{{ izin.bitis_tarihi }}</td>
+                        <td>{{ izin.onay_durumu }}</td>
+                        <td>
+                            <form method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" name="onayla" value="{{ izin.id }}">Onayla</button>
+                                <button type="submit" name="reddet" value="{{ izin.id }}">Reddet</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5">Bekleyen izin talebi bulunmamaktadır.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Onaylanan İzinler -->
+        <section>
+            <h2>Onaylanan İzinler</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Personel</th>
+                        <th>Başlangıç Tarihi</th>
+                        <th>Bitiş Tarihi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for izin in onaylanan_izinler %}
+                    <tr>
+                        <td>{{ izin.personel.username }}</td>
+                        <td>{{ izin.baslangic_tarihi }}</td>
+                        <td>{{ izin.bitis_tarihi }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3">Onaylanan izin bulunmamaktadır.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Şu Anda İzinli Olanlar -->
+        <section>
+            <h2>Şu Anda İzinli Olanlar</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Personel</th>
+                        <th>Başlangıç Tarihi</th>
+                        <th>Bitiş Tarihi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for izin in suan_izinli %}
+                    <tr>
+                        <td>{{ izin.personel.username }}</td>
+                        <td>{{ izin.baslangic_tarihi }}</td>
+                        <td>{{ izin.bitis_tarihi }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3">Şu anda izinli olan bulunmamaktadır.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Güncel Personel Listesi -->
+        <section>
+            <h2>Güncel Personel Listesi</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Personel</th>
+                        <th>Durum</th>
+                        <th>Yıllık İzin (Gün)</th>
+                        <th>İşlem</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for personel in personel_listesi %}
+                    <tr>
+                        <td>{{ personel.username }}</td>
+                        <td>{% if personel.is_yetkili %}Yetkili{% else %}Personel{% endif %}</td>
+                        <td>{{ personel.annual_leave_balance }}</td>
+                        <td>
+                            <form method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" name="sil" value="{{ personel.id }}">Sil</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4">Güncel personel bulunmamaktadır.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Personel Ekle -->
+        <section>
+            <h2>Yeni Personel Ekle</h2>
+            <form method="post">
+                {% csrf_token %}
+                {{ personel_ekle_form.as_p }}
+                <button type="submit" name="personel_ekle_form">Personel Ekle</button>
+            </form>
+        </section>
+
+        <!-- Dönüş Butonu -->
+        <div class="actions">
+            <a href="{% url 'homepage' %}">Ana Sayfaya Dön</a>
+        </div>
+    </div>
+</body>
+</html>
