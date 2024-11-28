@@ -21,7 +21,8 @@ Bu projede kullanılan teknolojiler:
 Django, PostgreSQL, Python 3.13.0 , HTML/CSS, JavaScript, Git, PgAdmin
 --------------------------------------------------------------------------------------------------------------------
 Proje kurulumu ve çalıştırılma aşamaları
-1- git clone https://github.com/AlpGnc/personel_takip.git
+1- git clone https://github.com/AlpGnc/personel_takip.git 
+direk buradan ekleyebilirsiniz.
 
 Gerekli kütüphaneleri yükleyin: Proje kök dizininde terminal açın ve şu komutu çalıştırarak tüm bağımlılıkları yükleyin:
 2- pip install -r requirements.txt
